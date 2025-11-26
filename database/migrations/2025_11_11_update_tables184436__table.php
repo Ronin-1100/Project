@@ -1,0 +1,54 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+        Schema::table('products', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+        Schema::table('trades', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+        Schema::table('promotions', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+
+        Schema::table('logs', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::table('trades', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::table('promotions', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+    }
+};
+
