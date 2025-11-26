@@ -12,7 +12,6 @@ use App\Models\Promotion;
 use App\Services\PromotionService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-//TODO: пример контроллера
 final class PromotionController extends Controller
 {
     public function __construct(

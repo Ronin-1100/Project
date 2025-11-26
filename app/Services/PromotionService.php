@@ -16,7 +16,7 @@ class PromotionService
 
         $query = $withDeleted ? Promotion::withTrashed() : Promotion::query();
 
-        return Promotion::query()
+        return $query
             ->with(['product', 'user'])
             ->tap(fn(Builder $query) => $this->filter($query, $searchData))
             ->when(

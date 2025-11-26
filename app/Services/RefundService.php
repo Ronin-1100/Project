@@ -2,12 +2,20 @@
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Refund;
+use App\Models\Trade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class RefundService
 {
+    /**
+     * @param array $createData
+     * @return Refund
+     * @throws \Exception
+     */
+
     public function paginate(array $searchData = []): LengthAwarePaginator
     {
         $page = $searchData['page'] ?? 1;
@@ -16,7 +24,7 @@ class RefundService
 
         $query = $withDeleted ?  Refund::withTrashed() : Refund::query();
 
-        return Refund::query()
+        return $query
             ->tap(fn(Builder $query) => $this->filter($query, $searchData))
             ->when(
                 isset($searchData['sort_type']),
@@ -26,9 +34,38 @@ class RefundService
             ->paginate(perPage: $perPage, page: $page);
     }
 
+    public function updateCounts(Trade $trade, int $refundQuantity): void
+    {
+        $trade->decrement('count', $refundQuantity);
+
+        Product::query()
+            ->where('id', $trade->product_id)
+            ->increment('count', $refundQuantity);
+    }
+
     public function create(array $createData): Refund
     {
+        $tradeId = $createData['trade_id'] ?? null;
+
+        $count = $createData['count'] ?? null;
+
+        $trade = Trade::query()->findOrFail($tradeId);
+
+        if($count <= 0 || $count > $trade->count) {
+            throw new \Exception('Trade count error');
+        }
+
+
         $refund = Refund::query()->create($createData);
+
+        if($count == $trade->count) {
+            $trade->delete();
+        }
+
+        $this -> updateCounts($trade, $count);
+
+        $trade->refresh();
+
 
         $refund->load(['user', 'trade']);
 

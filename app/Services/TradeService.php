@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Trade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,7 +17,7 @@ class TradeService
 
         $query = $withDeleted ?  Trade::withTrashed() : Trade::query();
 
-        return Trade::query()
+        return $query
             ->with(['product', 'user', 'promotion'])
             ->tap(fn(Builder $query) => $this->filter($query, $searchData))
             ->when(
@@ -27,9 +28,28 @@ class TradeService
             ->paginate(perPage: $perPage, page: $page);
     }
 
+    public function decreaseProductCount(int $productId, int $count): void
+    {
+        Product::query()->where('id', $productId)->decrement('count', $count);
+    }
+
     public function create(array $createData): Trade
     {
+
+        $count = $createData['count'] ?? null;
+
+        $productId = $createData['product_id'] ?? null;
+
+        $product = Product::query()->findOrFail($productId);
+
+        if($count <= 1 || $count > $product->count) {
+            throw new \Exception('Product count error');
+        }
+
         $trade = Trade::query()->create($createData);
+
+
+        $this->decreaseProductCount($product->id, $count);
 
         $trade->load(['product', 'user', 'promotion']);
 
@@ -45,11 +65,11 @@ class TradeService
         return $trade;
     }
 
+
     public function delete(Trade $trade): void
     {
         $trade->delete();
     }
-//TODO пример
     public function filter(Builder $query, array $searchData): Builder
     {
         return $query
@@ -66,4 +86,5 @@ class TradeService
                 fn(Builder $query) => $query->productId($searchData['product_id'])
             );
     }
+
 }
