@@ -23,7 +23,7 @@ class TradeResource extends JsonResource
             'count' => $this->count,
             'user' => ShortUserResource::make($this->whenLoaded('user', default: null)),
             'price' => $this->price,
-            'promo' => ShortPromotionResource::make($this->whenLoaded('promotion', default: null)),
+            'promotion' => ShortPromotionResource::make($this->whenLoaded('promotion', default: null)),
             'refund' => ShortRefundResource::make($this->whenLoaded('refund', default: null)),
         ];
     }

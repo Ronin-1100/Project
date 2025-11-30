@@ -17,7 +17,7 @@ class PromotionService
         $query = $withDeleted ? Promotion::withTrashed() : Promotion::query();
 
         return $query
-            ->with(['product', 'user'])
+            ->with(['product', 'user', 'trades'])
             ->tap(fn(Builder $query) => $this->filter($query, $searchData))
             ->when(
                 isset($searchData['sort_type']),
@@ -40,7 +40,7 @@ class PromotionService
     {
         $promotion->update($updateData);
 
-        $promotion->load(['product', 'user']);
+        $promotion->load(['product', 'user', 'trades']);
 
         return $promotion;
     }

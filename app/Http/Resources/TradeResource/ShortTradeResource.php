@@ -20,7 +20,7 @@ class ShortTradeResource extends JsonResource
             'count' => $this->count,
             'user_id' => $this->user_id,
             'price' => $this->price,
-            'promo_id' => $this->promo_id,
+            'promotion_id' => $this->promotion_id,
         ];
     }
 }

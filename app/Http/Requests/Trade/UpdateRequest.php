@@ -18,7 +18,7 @@ class UpdateRequest extends FormRequest
             'count' => ['integer',],
             'user_id' => ['integer', 'exists:users,id'],
             'price' => ['integer', 'min:1'],
-            'promo_id' => ['integer', 'exists:promotions,id'],
+            'promotion_id' => ['integer', 'exists:promotions,id'],
         ];
     }
 }

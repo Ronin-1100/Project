@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('count');
             $table->unsignedBigInteger('user_id');
             $table->decimal('price');
-            $table->unsignedBigInteger('promo_id')->nullable();
+            $table->unsignedBigInteger('promotion_id')->nullable();
             $table->timestamps();
 
             $table->foreign('product_id')
@@ -30,7 +30,7 @@ return new class extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('promo_id')
+            $table->foreign('promotion_id')
                 ->references('id')
                 ->on('promotions')
                 ->nullOnDelete();

@@ -18,7 +18,7 @@ class CreateRequest extends FormRequest
             'count' => ['required', 'integer'],
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'price' => ['required', 'integer'],
-            'promo_id' => ['nullable', 'integer', 'exists:promotions,id'],
+            'promotion_id' => ['nullable', 'integer', 'exists:promotions,id'],
         ];
     }
 }

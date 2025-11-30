@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\Promotion;
 use App\Models\Trade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -35,19 +36,41 @@ class TradeService
 
     public function create(array $createData): Trade
     {
-
         $count = $createData['count'] ?? null;
-
         $productId = $createData['product_id'] ?? null;
 
         $product = Product::query()->findOrFail($productId);
 
-        if($count <= 1 || $count > $product->count) {
+        if ($count <= 1 || $count > $product->count) {
             throw new \Exception('Product count error');
         }
 
-        $trade = Trade::query()->create($createData);
+        $promo = null;
+        if (!empty($createData['promotion_id'])) {
+            $promo = Promotion::query()->findOrFail($createData['promotion_id']);
+        }
 
+        $basePrice = $product->price * $count;
+
+        $finalPrice = $basePrice;
+
+        if ($promo) {
+            if (!empty($promo->discount_sum) && $promo->discount_sum > 0) {
+                $finalPrice -= $promo->discount_sum;
+            }
+
+            if (!empty($promo->discount_percent) && $promo->discount_percent > 0) {
+                $finalPrice -= $basePrice * ($promo->discount_percent / 100);
+            }
+
+            if ($finalPrice < 0) {
+                $finalPrice = 0;
+            }
+        }
+
+        $createData['price'] = $finalPrice;
+
+        $trade = Trade::query()->create($createData);
 
         $this->decreaseProductCount($product->id, $count);
 
@@ -55,6 +78,7 @@ class TradeService
 
         return $trade;
     }
+
 
     public function update(Trade $trade, array $updateData): Trade
     {
@@ -70,6 +94,7 @@ class TradeService
     {
         $trade->delete();
     }
+
     public function filter(Builder $query, array $searchData): Builder
     {
         return $query

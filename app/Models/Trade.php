@@ -16,7 +16,7 @@ use Illuminate\Notifications\Notifiable;
  * @property int count
  * @property int user_id
  * @property double price
- * @property int promo_id
+ * @property int promotion_id
  *
  * @property Product product
  * @property User user
@@ -32,7 +32,7 @@ class Trade extends Model
         'count',
         'user_id',
         'price',
-        'promo_id'
+        'promotion_id'
     ];
 
     public function product(): BelongsTo

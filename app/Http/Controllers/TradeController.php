@@ -32,6 +32,7 @@ final class TradeController extends Controller
         return new TradeResource($trade);
     }
 
+
     public function store(CreateRequest $request): TradeResource
     {
         return new TradeResource(

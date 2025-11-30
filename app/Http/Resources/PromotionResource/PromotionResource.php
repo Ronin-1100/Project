@@ -3,6 +3,7 @@
 namespace App\Http\Resources\PromotionResource;
 
 use App\Http\Resources\ProductResource\ShortProductResource;
+use App\Http\Resources\TradeResource\ShortTradeResource;
 use App\Http\Resources\UserResource\ShortUserResource;
 use App\Models\Promotion;
 use Illuminate\Http\Request;
